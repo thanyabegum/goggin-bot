@@ -1,8 +1,12 @@
 import discord
-token = "NzgxOTMzMzUyMTQzNjgzNTg0.X8E2Lg.Jfur65KjVpzhez43tPc1HEdM6Lk"
+import os
+
+from dotenv import load_dotenv
+
+load_dotenv()
+TOKEN = os.getenv("DISCORD_TOKEN")
 
 
 client = discord.Client()
 
-client.run(token)
-
+client.run(TOKEN)
