@@ -71,16 +71,18 @@ async def create(ctx, name, ti, event_date):
 	        (author.name, name, event_date, ti))
 	    db.commit()
 	date = parse(ti + " " + event_date)
-	client.loop.create_task(run_at(date, remind(author,name)))
+	mins = 5
+	modifiedDate = date - datetime.timedelta(minutes=mins)
+	client.loop.create_task(run_at(modifiedDate, remind(author,name)))
 	await ctx.send(message)
 
 
-db = sqlite3.connect('guild_config.db')
-c = db.cursor()
-c.execute("SELECT user, event_date FROM events WHERE user=?", ("ArmyGuy741",))
-rows = c.fetchall()
-for row in rows:
-	print(row)
+# db = sqlite3.connect('guild_config.db')
+# c = db.cursor()
+# c.execute("SELECT user, event_date FROM events WHERE user=?", ("ArmyGuy741",))
+# rows = c.fetchall()
+# for row in rows:
+# 	print(row)
 
 
 bot.run(TOKEN)
