@@ -12,6 +12,8 @@ from dotenv import load_dotenv
 from discord.ext import commands
 from contextlib import closing
 
+from collections.abc import Sequence
+
 async def wait_until(dt):
     # sleep until the specified datetime
     now = datetime.datetime.now()
@@ -74,8 +76,13 @@ async def create(ctx, name, ti, event_date):
 	mins = 5
 	modifiedDate = date - datetime.timedelta(minutes=mins)
 	client.loop.create_task(run_at(modifiedDate, remind(author,name)))
-	await ctx.send(message)
+	msg = await ctx.send(message)  
+  print(msg)
 
+# emoji1 = '\U0001F44D'
+# emoji2 = '\U00000031'
+# await msg.add_reaction(emoji1)
+# await msg.add_reaction(emoji2)
 
 # db = sqlite3.connect('guild_config.db')
 # c = db.cursor()
