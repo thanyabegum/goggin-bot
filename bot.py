@@ -13,6 +13,8 @@ from contextlib import closing
 
 from collections.abc import Sequence
 
+PREFIX = '!' # Change to prefix desired on your personal server
+
 def make_sequence(seq):
     if seq is None:
         return ()
@@ -51,10 +53,12 @@ load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 client = discord.Client()
 
-async def remind(author, name, date):
+async def sendRemind(author, name, date):
 	# calculates the days until the event
-	days = date - date.now()
-	hours = (days.days * 24 + days.seconds)//3600
+	days = date - datetime.datetime.now()
+	hours = days.days * 24 + days.seconds//3600
+	if hours < 0:
+		hours = 0
 
 	# converts date to appropriate string representation
 	# representation is: 0:00PM on Saturday, Oct 24 (in x hours)
@@ -69,10 +73,10 @@ async def remind(author, name, date):
 	embed.add_field(name="Event Time", value=date.strftime(event_time))
 	await author.send(content=None, embed=embed)
 
-bot = commands.Bot(command_prefix='!')
+bot = commands.Bot(command_prefix=PREFIX)
 
-@bot.command()
-async def create(ctx, name, *, time):
+@bot.command(help="Set up a reminder by inputting the event name in quotes followed by the time and date.")
+async def remind(ctx, name, *, time):
 	author = ctx.message.author
  
 	# reminder emojis
@@ -111,38 +115,42 @@ async def create(ctx, name, *, time):
 				print("Emoji0 was pressed")
 				counter0 += 1
 				if counter0 == 1:
-					task0 = client.loop.create_task(run_at(date, remind(author,name,date)))
+					task0 = client.loop.create_task(run_at(date, sendRemind(author,name,date)))
 
 			elif str(reaction.emoji) == emoji1:
 				print("Emoji1 was pressed")
 				counter1 += 1
 				if counter1 == 1:
 					modifiedDate = date - datetime.timedelta(minutes=10)
-					task1 = client.loop.create_task(run_at(modifiedDate, remind(author,name,date)))
+					task1 = client.loop.create_task(run_at(modifiedDate, sendRemind(author,name,date)))
 
 			elif str(reaction.emoji) == emoji2:
 				print("Emoji2 was pressed")
 				counter2 += 1
 				if counter2 == 1:
 					modifiedDate = date - datetime.timedelta(minutes=30)
-					task2 = client.loop.create_task(run_at(modifiedDate, remind(author,name,date)))
+					task2 = client.loop.create_task(run_at(modifiedDate, sendRemind(author,name,date)))
 
 			elif str(reaction.emoji) == emoji3:
 				print("Emoji3 was pressed")
 				counter3 += 1
 				if counter3 == 1:
 					modifiedDate = date - datetime.timedelta(hours=1)
-					task3 = client.loop.create_task(run_at(modifiedDate, remind(author,name,date)))
+					task3 = client.loop.create_task(run_at(modifiedDate, sendRemind(author,name,date)))
 
 			elif str(reaction.emoji) == emoji4:
 				print("Emoji4 was pressed")
 				counter4 += 1
 				if counter4 == 1:
 					modifiedDate = date - datetime.timedelta(days=1)
-					task4 = client.loop.create_task(run_at(modifiedDate, remind(author,name,date)))
+					task4 = client.loop.create_task(run_at(modifiedDate, sendRemind(author,name,date)))
 
 		except asyncio.TimeoutError:
 			print("Successfully timed out")
 			loopclose = 1
+
+for filename in os.listdir('./cogs'):
+	if filename.endswith('.py'):
+		bot.load_extension(f'cogs.{filename[:-3]}')
 
 bot.run(TOKEN)
