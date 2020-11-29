@@ -7,7 +7,7 @@ To install, download the repository and execute the following command in the ter
 
 `pip install -r requirements.txt`
 
-Create a `.env file` in the same directory as the code that contains the following information: 
+In the same directory as the code, create a `.env file` that contains the following information: 
 
 `DISCORD_TOKEN=<discord-bot-token>` where `<discord-bot-token>` is replaced by a string of your bot's token.
 
